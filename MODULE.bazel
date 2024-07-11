@@ -26,8 +26,8 @@ use_repo(llvm, "llvm_toolchain")
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
     name = "distroless_cc",
-    digest = "sha256:a9056d2232d16e3772bec3ef36b93a5ea9ef6ad4b4ed407631e534b85832cf40",
-    image = "gcr.io/distroless/cc-debian12",
+    digest = "sha256:55a5e011b2c4246b4c51e01fcc2b452d151e03df052e357465f0392fcd59fddf",
+    image = "gcr.io/distroless/cc-debian11",
     platforms = ["linux/amd64"],
 )
 
@@ -45,9 +45,9 @@ use_repo(rust, "rust_toolchains")
 crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
 crate.from_cargo(
     name = "crates",
-    cargo_lockfile = "//:Cargo.lock",
+    cargo_lockfile = "//minstrel:Cargo.lock",
     manifests = [
-        "//:Cargo.toml",
+        "//minstrel:Cargo.toml",
     ],
 )
 
@@ -63,8 +63,8 @@ filegroup(
   visibility = ["//visibility:public"],
 )
 """,
-    sha256 = "93761371443acf55f429cab6628d5b423bf9a07a3445d2376b4ba52cb35a6d99",
-    urls = ["https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/812a1cdc57400e9e0b3def67d41403b8bb764d2d/debian_sid_amd64_sysroot.tar.xz"],
+    sha256 = "1be60e7c456abc590a613c64fab4eac7632c81ec6f22734a61b53669a4407346",
+    urls = ["https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/2028cdaf24259d23adcff95393b8cc4f0eef714b/debian_bullseye_amd64_sysroot.tar.xz"],
 )
 
 register_toolchains(

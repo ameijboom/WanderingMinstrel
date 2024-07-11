@@ -3,6 +3,9 @@ use anyhow::anyhow;
 use poise::serenity_prelude as serenity;
 use tracing_subscriber::EnvFilter;
 
+mod commands;
+mod xivapi;
+
 #[derive(Parser)]
 struct Opts {
     #[clap(long, env = "XIV_API_TOKEN")]
@@ -15,12 +18,6 @@ struct Opts {
     pub discord_channel: String
 }
 
-pub struct Data {
-    channel: serenity::ChannelId,
-}
-
-type Error = Box<dyn std::error::Error + Send + Sync>;
-
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     let opts = Opts::parse();
@@ -32,20 +29,25 @@ async fn main() -> Result<(), anyhow::Error> {
     let intents = serenity::GatewayIntents::non_privileged()
         | serenity::GatewayIntents::MESSAGE_CONTENT
         | serenity::GatewayIntents::GUILD_MEMBERS;
+
+    let options = poise::FrameworkOptions {
+        commands: vec![commands::item::search()],
+        event_handler: |ctx, event, framework, data| {
+            Box::pin(event_handler(ctx, event, framework, data))
+        },
+        ..Default::default()
+    };
+    
     let framework = poise::Framework::builder()
-        .setup(move |_ctx, _ready, _framework| {
+        .setup(move |ctx, _ready, framework| {
             Box::pin(async move {
-                Ok(Data {
-                    channel: serenity::ChannelId::new(opts.discord_channel.parse()?),
+                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+                Ok(commands::Data {
+                    xivapi: xivapi::client::Client::new(opts.xiv_api_token)
                 })
             })
         })
-        .options(poise::FrameworkOptions {
-            event_handler: |ctx, event, framework, data| {
-                Box::pin(event_handler(ctx, event, framework, data))
-            },
-            ..Default::default()
-        })
+        .options(options)
         .build();
 
     let mut client = serenity::ClientBuilder::new(opts.discord_token, intents)
@@ -61,16 +63,10 @@ async fn main() -> Result<(), anyhow::Error> {
 async fn event_handler(
     ctx: &serenity::Context,
     event: &serenity::FullEvent,
-    _framework: poise::FrameworkContext<'_, Data, Error>,
-    data: &Data,
-) -> Result<(), Error> {
+    _framework: poise::FrameworkContext<'_, commands::Data, commands::Error>,
+    data: &commands::Data,
+) -> Result<(), commands::Error> {
     match event {
-        serenity::FullEvent::GuildMemberAddition { new_member } => {}
-        serenity::FullEvent::GuildMemberRemoval {
-            guild_id,
-            user,
-            member_data_if_available,
-        } => {}
         _ => {}
     }
 

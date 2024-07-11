@@ -1,0 +1,22 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: minstrel
+build:
+  artifacts:
+    - image: minstrel
+      bazel:
+        target: //minstrel:image.tar
+  # local:
+  #   concurrency: 1
+  #   useBuildkit: true
+deploy:
+  kubeContext: byrne
+  helm:
+    releases:
+      - name: minstrel
+        namespace: minstrel
+        chartPath: helm
+        valuesFiles:
+          - helm/values.yaml
+        version: 0.1.0

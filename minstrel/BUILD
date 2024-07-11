@@ -18,7 +18,7 @@ pkg_tar(
 )
 
 oci_image(
-    name = "api-image",
+    name = "base-image",
     base = "@distroless_cc",
     entrypoint = ["/minstrel"],
     tars = [
@@ -27,7 +27,7 @@ oci_image(
 )
 
 oci_tarball(
-    name = "base.tar",
+    name = "image.tar",
     image = ":base-image",
     repo_tags = ["minstrel:latest"],
     visibility = ["//visibility:public"],
