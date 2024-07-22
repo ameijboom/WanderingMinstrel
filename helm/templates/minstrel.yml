@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wandering-minstrel
+  namespace: minstrel
+spec:
+  selector:
+    matchLabels:
+      app: minstrel
+  template:
+    metadata:
+      labels:
+        app: minstrel
+    spec:
+      containers:
+        - name: wandering-minstrel
+          image: {{ .Values.image }}
+          env:
+          - name: DISCORD_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: discord
+                key: DISCORD_TOKEN
+          - name: XIVAPI_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: xivapi
+                key: XIVAPI_TOKEN
+          - name: DISCORD_CHANNEL
+            value: {{ .Values.discord.channel | toString }}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: discord
+  namespace: minstrel
+spec:
+  encryptedData:
+    DISCORD_TOKEN: AgCAtaOUi1r+GirtHT6ZilUVriqyoEnStqqyyO5jtIlGTCIAgjHrowV8iQ99s7zT3Chln+P5hjzlb1iJhPGROP9l3vTZCoutJ+Vur5TrTf4TSM/8K4W/iljyF93UgSbE/JyDJLaA5ou9o3NhxPEzmEhV0Hx/loAQfK00ykUzkBGtY2IpqKivxA5lRTGXciKcsEGtO58yY61z1jQcvuJVyhHIf9Zu5vDOYX6kG5Mhn5s6bE6sMH43ApYk3GmFiQCDSVYwEQVtqNUqr+VkjYrksohbhsqjibGgzNM/Zfrt/0xLUSkYAczv8zMev9QMR7qpGgG0FgSdmrkDbG3gINRfu2AdobFa6glEaNadlIRY7lXNZ9wvJ1HaifwEIkxeS2TWcXlS/1o90RS2pT8oWeFKPFCLFtKyeM874L+AmYQLgsRBGsUcek9G/VYGfUKGZei+PfxTiC0WBJDAQc6KKFLX+5V3aLno1RKbsgQ34KUyhd8fQitGL8wU2XmXzSWbzKuc6jwUHJb64a3QyzZSzsD1XUoR5JUZF5bz4QC5ygyEQtk1y2q9/y6YFWMmRny7pAmBNEvOHNeiFeFCLtZ1EwKjWNFS3s6T4dZJ4oiG3L+ZyBYZ1UAuxlaJfLM+XbFlh37J2OmQhN6v2k341g5foHZxBradj5/EbgUG5txGI1Tk2k9aQV2HICHWoQsjrePYy0QYudGbgSoJbhMOUOSleL1Ye7SDz26dDQb0Yp1JeBZW7YeM8/tJohu4kHnFh7ZDDOuwCa1Fzl52gN6X++I9rSiVc8RebyMA9qbXl7I=
+  template:
+    metadata:
+      name: discord
+      namespace: minstrel
+
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: xivapi
+  namespace: minstrel
+spec:
+  encryptedData:
+    XIVAPI_TOKEN: AgBCxE4vn6rG8nwo3AtGTvZ1Ycr0Yr1s2kcKeVjIQI4e3L0AonO2QoPDQ3zYddWBMwezNPl8P0W0tQUwNfbQtidxGuRe2nGUc0ZfSkTwNzxJh+sqnzZEiYAj6TFjSkg7fjpvAZuN5UuWESiHSq1KkBOPKFYOcm+MDGk4TMvWQBpwBhRYCb8dEZg3o+0s0nL72NHGxbdqLc3+GY8o1w53e+xm+RvtmoCBdWgNbBSESAGTKwxyaW20yEI9rPzXenM1MmVeULQ1soBvm/dINF8tHMshMnV/GrdsZZz5Y5Mp1DxltGtvQ/i6ZoCK/Lm2gr4EEMgzg/uG4Y8DJsdPzYbateEQZLuWV9o+ZWp3spyR5vh9RDy/2bIOlUYRxI9+JebaxILqQWn+uhsGurfR7YUEWyR2hTiDYNQr9OGmes8UaRWeLDjY9zl0QYk8UuHMfOwnUTZrK9gN2+9PA7+Fi5NvZG3N1j5FBzygjM0GDZJX6yzFrxuDw4kaGF9X2271AfTgrwsjwUvS0To3cRi8YVryfxYJ19dFccE7+1pgwUqaWHEmyyrdg+yguXnkEc/RxvB6/euu5V9DwWeLP4xkxHgPaM0dskD8iAzf2hMEtpazXyjL19x0Zqbaqs7UFmGRmGHrL9ZF7lnOZffN1/kOMjoEVm//7eie5mvF2q+7uU59Pgszn7Fjk2fTzxRj3UUTfafRo8iXqzju1fkw27vzN8TNrW0uHMG8asQsSl5V5MABr104neZ9lzcDhmwmjlZ7zI+aPOnL7dAwT/wtea2YxuYo9mbp
+  template:
+    metadata:
+      name: xivapi
+      namespace: minstrel

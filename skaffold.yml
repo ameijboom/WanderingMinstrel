@@ -20,3 +20,5 @@ deploy:
         valuesFiles:
           - helm/values.yaml
         version: 0.1.0
+        setValueTemplates:
+          image: "{{.IMAGE_FULLY_QUALIFIED_minstrel}}"

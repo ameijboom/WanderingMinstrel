@@ -1,0 +1,1 @@
+build --platforms :linux-amd64
