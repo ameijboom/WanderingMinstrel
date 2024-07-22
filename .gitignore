@@ -25,4 +25,5 @@ Cargo.lock
 .env
 
 bazel-*
-*bazel.lock
+*bazel.lock**/.DS_Store
+.DS_Store

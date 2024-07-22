@@ -12,7 +12,7 @@ impl Client {
     pub fn new(key: String) -> Self {
         return Client {
             req: reqwest::Client::new(),
-            base: "https://xivapi.com".to_owned(),
+            base: "https://xivapi.com".to_string(),
             key,
         };
     }
@@ -24,7 +24,7 @@ impl Client {
             .await
             .map_err(|e| {
                 tracing::error!({ path, error = ?e }, "failed to get data");
-                return anyhow::anyhow!(e);
+                anyhow::anyhow!(e)
             })
     }
 

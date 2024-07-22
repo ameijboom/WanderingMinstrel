@@ -7,9 +7,9 @@ build:
     - image: minstrel
       bazel:
         target: //minstrel:image.tar
-  # local:
-  #   concurrency: 1
-  #   useBuildkit: true
+  local:
+    concurrency: 1
+    useBuildkit: true
 deploy:
   kubeContext: byrne
   helm:
