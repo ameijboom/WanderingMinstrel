@@ -1,13 +1,14 @@
 """Bazel module for Wandering Minstrel"""
 module(name = "minstrel")
 
-rust_version = "1.78.0"
+rust_version = "1.81.0"
 
 bazel_dep(name = "rules_oci", version = "1.7.6")
 bazel_dep(name = "rules_pkg", version = "0.10.1")
 bazel_dep(name = "rules_rust", version = "0.46.0")
 bazel_dep(name = "rules_foreign_cc", version = "0.10.1")
-bazel_dep(name = "toolchains_llvm", version = "1.0.0")
+bazel_dep(name = "toolchains_llvm", version = "1.2.0")
+bazel_dep(name = "chrome-linux-sysroot", version = "0.0.1")
 
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 llvm.toolchain(
@@ -17,27 +18,35 @@ llvm.toolchain(
 
 llvm.sysroot(
     name = "llvm_toolchain",
+    targets = ["linux-aarch64"],
+    label = "@@chrome-linux-sysroot~~_repo_rules~debian_bullseye_arm64//:sysroot",
+)
+
+llvm.sysroot(
+    name = "llvm_toolchain",
     targets = ["linux-x86_64"],
-    label = "@org_chromium_sysroot_linux_amd64//:sysroot",
+    label = "@@chrome-linux-sysroot~~_repo_rules~debian_bullseye_amd64//:sysroot",
 )
 
 use_repo(llvm, "llvm_toolchain")
-
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
     name = "distroless_cc",
-    digest = "sha256:55a5e011b2c4246b4c51e01fcc2b452d151e03df052e357465f0392fcd59fddf",
-    image = "gcr.io/distroless/cc-debian11",
-    platforms = ["linux/amd64"],
+    digest = "sha256:a9056d2232d16e3772bec3ef36b93a5ea9ef6ad4b4ed407631e534b85832cf40",
+    image = "gcr.io/distroless/cc-debian12",
+    platforms = ["linux/amd64", "linux/arm64/v8"],
 )
 
-use_repo(oci, "distroless_cc")
+use_repo(oci, "distroless_cc", "distroless_cc_linux_amd64", "distroless_cc_linux_arm64_v8")
 
 rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
 rust.toolchain(
     edition = "2021",
     versions = [rust_version],
-    extra_target_triples = ["x86_64-unknown-linux-gnu"],
+    extra_target_triples = [
+        "aarch64-unknown-linux-gnu",
+        "x86_64-unknown-linux-gnu",
+    ],
 )
 
 use_repo(rust, "rust_toolchains")

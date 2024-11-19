@@ -29,6 +29,8 @@ spec:
                 key: XIVAPI_TOKEN
           - name: DISCORD_CHANNEL
             value: {{ .Values.discord.channel | toString }}
+          - name: RUST_LOG
+            value: {{ .Values.log }}
 ---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret

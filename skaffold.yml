@@ -7,11 +7,17 @@ build:
     - image: minstrel
       bazel:
         target: //minstrel:image.tar
+        platforms:
+          - platform: linux/amd64
+            target: //:linux-amd64
+          - platform: linux/arm64
+            target: //:linux-arm64
+
   local:
     concurrency: 1
     useBuildkit: true
 deploy:
-  kubeContext: byrne
+  # kubeContext: byrne
   helm:
     releases:
       - name: minstrel

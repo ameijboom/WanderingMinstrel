@@ -1,2 +1,4 @@
 discord:
   channel: "1259797269935554580"
+
+log: "debug"
